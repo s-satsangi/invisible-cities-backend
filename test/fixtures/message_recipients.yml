@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  recipient_id: 1
+  recipient_group_id: 1
+  message_id: 1
+  is_read: false
+
+two:
+  recipient_id: 1
+  recipient_group_id: 1
+  message_id: 1
+  is_read: false
