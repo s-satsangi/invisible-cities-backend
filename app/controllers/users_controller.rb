@@ -7,13 +7,22 @@ class UsersController < ApplicationController
     # update? edit?
     # params
     def create
-        byebug
+        puts "Ayyyyy"
+        # byebug
         @user=User.new(user_params)
         if !@user.save
             return render json: {status: "error", message: "some kinda wrong just happend"}
         end
         # do user created things. make a token & throw at browser if you do auth
         render json: {user: @user}, status: :created
+    end
+
+    def delete
+        puts "delete"
+    end
+
+    def update
+        puts "update"
     end
 
     private
