@@ -10,7 +10,7 @@ class MessageController < ApplicationController
     end
     # find & send message_id; send user2 to :message_recipient; set is_read to false
     @message_recipient=MessageRecipient.new(recipient_id: @front_end_message[:user2], message_id: @message.id, is_read: false)
-    byebug
+    # byebug
     if !@message_recipient.save
       return render json: {status: "error", message: "fail while saving to MessageRecipient"}
     end
@@ -18,7 +18,18 @@ class MessageController < ApplicationController
   end
 
   def index
-    byebug
+    # byebug
+    # .... riiiiiight.  Get the messages from Message where recipient_id = user_id.  
+    # .... maybe it's time to get global props somehow?  
+    
+    #get the message_id's from message_recipients
+    #where recipient_id = user
+    @message_ids=MessageRecipient.where( recipient_id: 3 )
+    #for each message_id, add the message
+    # @message_ids.map{|mid| mid["message_id"]}
+    @messages=Message.where(id: @message_ids.map{|mid| mid["message_id"]})
+    # byebug
+    render json: {messages: @messages}
   end
 
   private
