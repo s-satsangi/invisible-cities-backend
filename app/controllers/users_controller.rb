@@ -25,6 +25,11 @@ class UsersController < ApplicationController
         puts "update"
     end
 
+    def index
+        @users=User.all
+        render json: {users: @users}
+    end
+
     private
 
     def user_params

@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   post '/login', to: 'auth#create'
   get 'users/create', to: 'users#create'
   post 'users', to: 'users#create'
+  get 'users', to: 'users#index'
   get 'users/delete', to: 'users#delete'
   get 'users/update', to: 'users#update'
 end
