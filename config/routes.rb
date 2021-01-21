@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   get 'follow/create'
+  post 'friends', to: 'follow#index'
   post 'message', to: 'message#create'
   get 'message', to: 'message#index'
   get 'message/update', to: 'message#update'
