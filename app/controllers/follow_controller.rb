@@ -9,6 +9,9 @@ class FollowController < ApplicationController
     # so, we can assume both people consent in this function
   end
 
+  def index
+  end
+
   def request
     # called when a user wants to add another as a friend
     # base functionality:
