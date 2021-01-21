@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
   get 'follow/create'
   post 'friends', to: 'follow#index'
-  post 'message', to: 'message#create'
-  get 'message', to: 'message#index'
+  post 'create-message', to: 'message#create'
+  # get 'message', to: 'message#index'
+  post 'message', to: 'message#index'
   get 'message/update', to: 'message#update'
   get 'message/delete', to: 'message#delete'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
