@@ -1,5 +1,5 @@
 class AuthController < ApplicationController
   def create
-    byebug
+    # byebug
   end
 end
