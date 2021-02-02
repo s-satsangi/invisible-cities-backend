@@ -30,6 +30,12 @@ class UsersController < ApplicationController
         render json: {users: @users}
     end
 
+    def search
+        byebug
+        search_user = user_params
+
+    end
+
     private
 
     def user_params
