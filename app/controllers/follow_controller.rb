@@ -10,17 +10,34 @@ class FollowController < ApplicationController
   end
 
   def index
+    @user=User.where(username: count_params[:username])
+    followers=Follow.where(followee_id: @user.ids[0])  
+    render json: {followers: followers}
+  end
+
+  def number_for_profile
+    # byebug
+    @user=User.where(username: count_params[:username])
+    numfollowers=Follow.where(followee_id: @user.ids[0]).count 
+    numblocked=Block.where(blockee_id: @user.ids[0]).count
+    render json: {followers: numfollowers, blocked: numblocked}
+  end
+
+
+  def follow_handshake
+#old shit begin
     # we expect an input of userId
     # we return the users that are followers in Follow
     # byebug
-    @userId = follow_index_params[:userId]
-    @followers = Follow.where(followee_id: @userId)
-    followers_id=@followers.map{|follow| follow[:follower_id]}
-    @friends = User.find(followers_id)
-    render json: {friends: @friends}
-  end
+  #  @userId = follow_index_params[:userId]
+  #  @followers = Follow.where(followee_id: @userId)
+  #  followers_id=@followers.map{|follow| follow[:follower_id]}
+  #  @friends = User.find(followers_id)
+  #  render json: {friends: @friends}
+  # end
 
-  def friend_request
+  # def friend_request
+###old shit end
     # called when a user wants to add another as a friend
     # base functionality:
     # check if relation is in blocked table
@@ -28,11 +45,13 @@ class FollowController < ApplicationController
     # sends a message to the other user and 
     #     if: user responds yes > call create
     #     if: user responds no > call block
+
   end
 
   def block
     # if relationship exists, remove from Follow
     # add one-way to block
+    
   end
 
   private
@@ -43,6 +62,10 @@ class FollowController < ApplicationController
 
   def follow_params
     params.require(:follow).permit(:user1, :user2)
+  end
+
+  def count_params
+    params.require(:user).permit(:username)
   end
 
 end
