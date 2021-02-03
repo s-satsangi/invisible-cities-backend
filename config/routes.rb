@@ -1,7 +1,9 @@
 Rails.application.routes.draw do
   get 'follow/create'
-  post 'friends', to: 'follow#index'
+
+  post '/friends', to: 'follow#index'
   post 'numfriends', to: 'follow#number_for_profile'
+
 
   post 'create-message', to: 'message#create'
   # get 'message', to: 'message#index'

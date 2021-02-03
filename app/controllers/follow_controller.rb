@@ -25,6 +25,19 @@ class FollowController < ApplicationController
 
 
   def follow_handshake
+#old shit begin
+    # we expect an input of userId
+    # we return the users that are followers in Follow
+    # byebug
+  #  @userId = follow_index_params[:userId]
+  #  @followers = Follow.where(followee_id: @userId)
+  #  followers_id=@followers.map{|follow| follow[:follower_id]}
+  #  @friends = User.find(followers_id)
+  #  render json: {friends: @friends}
+  # end
+
+  # def friend_request
+###old shit end
     # called when a user wants to add another as a friend
     # base functionality:
     # check if relation is in blocked table
@@ -42,6 +55,10 @@ class FollowController < ApplicationController
   end
 
   private
+
+  def follow_index_params
+    params.require(:follow).permit(:userId)
+  end
 
   def follow_params
     params.require(:follow).permit(:user1, :user2)
