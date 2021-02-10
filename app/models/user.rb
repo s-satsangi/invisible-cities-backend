@@ -10,4 +10,5 @@ class User < ApplicationRecord
     has_many :blockers, through: :blocking_users
 
     has_many :messages
+    has_secure_password
 end

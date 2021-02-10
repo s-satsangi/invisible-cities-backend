@@ -32,6 +32,21 @@ class MessageController < ApplicationController
     
     render json: {messages: @messages}
   end
+  # Selecting messages for a conversation
+
+  # two cases
+  
+  # 1: most recent message is from someone else
+  # get message_ids from message_recipients where recipient_id = user_id, is_read = false,
+  # for each message_id:
+  # get message, creator_id, and recipient_id. if parent_id isn't zero,
+  # select message_id is parent_id till parent_id is zero
+  # check
+  
+  # 2: most recent message is first from user to another recipient
+  # message_ids=select from messages where creator is user
+  # messages_to_send = select from message_recipient where message_id && is_read is false
+
 
   private
 
