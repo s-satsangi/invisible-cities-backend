@@ -1,4 +1,15 @@
 class MessageController < ApplicationController
+
+  #endpoint to create a message
+
+  #check if params came with user_groups.
+  #  if params recipient = 0, then multi = []  
+  #if no user_groups, make new entries
+  #insert message & creator_id (from cookie) 
+  #   in messages
+  #insert message_id, group_id, recipient_id 
+  #  (zero if multi-user)
+  #  into message_recipients 
   def create
     # byebug
     @front_end_message=create_message_params
