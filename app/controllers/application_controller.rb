@@ -103,6 +103,9 @@ class ApplicationController < ActionController::API
     end
 ##
 
+  
+
+
 private
   
 def require_login

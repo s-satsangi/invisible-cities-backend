@@ -162,7 +162,9 @@ class FollowController < ApplicationController
 
   # end
 
-  
+  ###############
+
+
   private
 
   def follow_index_params
