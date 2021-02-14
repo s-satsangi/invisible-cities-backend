@@ -28,6 +28,14 @@ class AuthController < ApplicationController
   #end of HTTPONLY
   end
 
+  def destroy
+    if cookies.delete :jwt
+      return render json: {logout: "success!"}
+    else
+      return render json: {logout: "suck eggs!"}
+    end
+  end
+  
   private
 
   def auth_params

@@ -35,6 +35,16 @@ class UsersController < ApplicationController
 
     def delete
         puts "delete"
+        victim =  User.find(decode_jwt(cookies.signed[:jwt])["user_id"])
+        victim_messages = Message.where(creator_id: victim.id)
+        victim_messages.destroy_all
+        victim_received = MessageRecipient.where(recipient_id: victim.id)
+        victim_received.destroy_all
+        victim_user_groups = UserGroup.where(user_id: victim.id)
+        victim_user_groups.destroy_all
+        cookies.delete :jwt
+        victim.destroy
+
     end
 
     def update
@@ -46,6 +56,11 @@ class UsersController < ApplicationController
         # byebug
         search_user = User.find_by(username: user_params[:username])
         render json: { user: search_user }
+    end
+
+    #endpoint to send user info for array of users
+    #that aren't your friend yet for group chat?
+    def id_strangers
     end
 
 #
