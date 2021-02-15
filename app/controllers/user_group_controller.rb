@@ -13,31 +13,36 @@ class UserGroupController < ApplicationController
         vals = user_ids.map{|usr_ary| User.where(id: usr_ary)}
         # byebug
         ret_obj=ret_keys.zip(vals)
-#################################################
-#               console  play
-# let ret_obj = {}
-# first_hit = UserGroup.where(user_id: 4)
-# groups = first_hit.map{|hit| hit.group_id}
-
-# vals = groups.map{|group| UserGroup.where(group_id: group).pluck("user_id")}
-
-# ret_obj = Hash[groups.zip(vals)]
-#You need to retool this for multiple users
-#user_ids = [[4, 5, 6], [2,3]]
-#wanted = user_ids.map{|usr_ary| User.where(id: usr_ary)}
-#################################################
         render json: {user_groups: [ret_obj]}
 
     end
     
     #endpoint to add users to group
     def add_to_group
-        byebug
+        # byebug
+        add_group_id = user_group_params[1]
+        new_members = user_group_params[0]
+
+        new_members.each do |member|
+            new_group = UserGroup.new(user_id: member, group_id: add_group_id)
+            if !new_group.save
+                return render json: {status: "error", add_user_to_group_creation: "failure"}
+            end
+        end
+        return render json: {status: "success"}
     end
     
     #endpoint to remove users from group
     def boot_from_group
-        byebug
+        # byebug
+        boot_group_id = user_group_params[1]
+        boot_members = user_group_params[0]
+        
+            boot_from_group = UserGroup.where(user_id: boot_members, group_id: boot_group_id)
+            if !boot_from_group.destroy_all
+                return render json: {status: "error", boot_users_from_group: "failure"}
+            end        
+            return render json: {status: "success"}
     end
 
     # endpoint to create new group
@@ -47,13 +52,27 @@ class UserGroupController < ApplicationController
        #would be cool to check if group exists
        new_group_id = UserGroup.last.group_id + 1
     #    byebug
-       user_group_params.each do |user|
+       user_group_params[0].each do |user|
             new_group = UserGroup.new(user_id: user, group_id: new_group_id)
             if !new_group.save
                 return render json: {status: "error", new_group_creation: "failure"}
             end
        end
        return render json: {status: "success"}
+    end
+
+    def delete_group
+        # find entries for:
+        # UserGroup, MessageRecipient, & Message
+        del_group_id=user_group_params[1]
+        del_user_group_entries = UserGroup.where(group_id: del_group_id)
+        del_group_message_recipient = MessageRecipient.where(recipient_group_id: del_group_id)
+        del_messages = Message.where(id: del_group_message_recipient.pluck(:message_id))
+        # destroy_all entries
+        del_user_group_entries.destroy_all
+        del_messages.destroy_all
+        del_group_message_recipient.destroy_all
+        render json: { destry: "Group destroyed" }
     end
 
     private
