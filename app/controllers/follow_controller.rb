@@ -67,10 +67,7 @@ class FollowController < ApplicationController
     if !half_follow_a.save
       ret_errors.push("Failure in the first half of follow. ")
     end
-    # half_follow_b = Follow.new(follower_id: follow_params[:user2], followee_id: decode_jwt(cookies.signed[:jwt])["user_id"])
-    # if !half_follow_b.save
-    #   ret_errors.push("Failure in the second half of follow.")
-    # end
+
     if !!ret_errors
       render json: {ret_errors: ret_errors}
     else
@@ -139,31 +136,12 @@ class FollowController < ApplicationController
 
 
   def follow_handshake
-#old shit begin
-    # we expect an input of userId
-    # we return the users that are followers in Follow
-    # byebug
    @userId = follow_index_params[:userId]
    @followers = Follow.where(followee_id: @userId)
    followers_id=@followers.map{|follow| follow[:follower_id]}
    @friends = User.find(followers_id)
    render json: {friends: @friends}
   end
-
-  # def friend_request
-###old shit end
-    # called when a user wants to add another as a friend
-    # base functionality:
-    # check if relation is in blocked table
-    # refuse if user is blocked, remove block if reverse relationship
-    # sends a message to the other user and 
-    #     if: user responds yes > call create
-    #     if: user responds no > call block
-
-  # end
-
-  ###############
-
 
   private
 

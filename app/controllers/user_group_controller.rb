@@ -42,10 +42,12 @@ class UserGroupController < ApplicationController
 
     # endpoint to create new group
     def create
+        # byebug
        #group doesn't exist, for the future it 
        #would be cool to check if group exists
        new_group_id = UserGroup.last.group_id + 1
-       user_group_params[:user_array].each do |user|
+    #    byebug
+       user_group_params.each do |user|
             new_group = UserGroup.new(user_id: user, group_id: new_group_id)
             if !new_group.save
                 return render json: {status: "error", new_group_creation: "failure"}
@@ -57,7 +59,6 @@ class UserGroupController < ApplicationController
     private
 
     def user_group_params
-        params.require(:user_group).permit(:user_array)
+        params.require(:user_group)
     end
-
 end

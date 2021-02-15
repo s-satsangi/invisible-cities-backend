@@ -34,17 +34,28 @@ class UsersController < ApplicationController
     end
 
     def delete
-        puts "delete"
+        #find the user to delete
         victim =  User.find(decode_jwt(cookies.signed[:jwt])["user_id"])
+
+        #find the relations to the user:
+        # Message, MessageRecipient, UserGroup
+        # Follow (both as a follower and followee)
         victim_messages = Message.where(creator_id: victim.id)
-        victim_messages.destroy_all
-        victim_received = MessageRecipient.where(recipient_id: victim.id)
-        victim_received.destroy_all
+        victim_received = MessageRecipient.where(message_id: victim_messages.ids)
         victim_user_groups = UserGroup.where(user_id: victim.id)
+        victim_follower = Follow.where(follower_id: victim.id)
+        victim_followee = Follow.where(followee_id: victim.id)
+        
+        # delete all the relations & delete cookie,
+        # delete User entry
+        victim_messages.destroy_all
+        victim_received.destroy_all
         victim_user_groups.destroy_all
+        victim_follower.destroy_all
+        victim_followee.destroy_all
         cookies.delete :jwt
         victim.destroy
-
+        render json: { del_user: "account deletion success" }
     end
 
     def update
