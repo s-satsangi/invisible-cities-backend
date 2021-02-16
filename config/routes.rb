@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   post '/delmsg', to: 'message#delete'
 
   post '/block', to: 'follow#block'
+  post '/unblock', to: 'follow#unblock'
   post '/add_friend', to: 'follow#add_friend'
   post '/friends', to: 'follow#index'
   get '/numfriends', to: 'follow#number_for_profile'

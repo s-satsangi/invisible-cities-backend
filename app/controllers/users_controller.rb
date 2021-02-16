@@ -23,7 +23,7 @@ class UsersController < ApplicationController
         # byebug
         @user=User.new(user_params)
         if !@user.save
-            return render json: { message: "some kinda wrong just happend"}, status: :not_acceptable
+            return render json: { error: "that username is already taken, please try another"}, status: :not_acceptable
         end
         #
         #   More flatiron auth stuff
@@ -65,7 +65,11 @@ class UsersController < ApplicationController
     #endpoint to search for users to add or block
     def search
         # byebug
+        user=User.find(decode_jwt(cookies.signed[:jwt])["user_id"])
         search_user = User.find_by(username: user_params[:username])
+        if !Block.where(blocker_id: search_user.id, blockee_id:user.id).empty?
+            return render json: {error:  "There was a problem! (Ya been blocked!)"}
+        end
         render json: { user: search_user }
     end
 
