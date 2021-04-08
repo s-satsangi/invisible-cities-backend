@@ -1,13 +1,4 @@
 class FollowController < ApplicationController
-  def create
-    byebug
-    # creates follow relation both ways
-    # once we've got that working, we can write a request function
-    # that can handle sending a message to a potential friend and 
-    # getting response/permissions/etc
-
-    # so, we can assume both people consent in this function
-  end
 
   #endpoint to return all friends
   def index
@@ -37,7 +28,11 @@ class FollowController < ApplicationController
     sent_requests_ids = sent_requests.map{|bud| bud.followee_id}
     waiting_on = User.find(sent_requests_ids)
     # followers=Follow.where(followee_id: @user.ids[0])  
-    render json: {followers: friends, requests: pending_buds, sent_requests: waiting_on}
+
+    blocked_ids = Block.where(blocker_id: @user.ids[0]).pluck(:blockee_id)
+    #  byebug
+    blocked = User.find(blocked_ids)
+    render json: {followers: friends, requests: pending_buds, sent_requests: waiting_on, blocked: blocked}
   end
 
   # endpoint to send a friend request
@@ -46,6 +41,10 @@ class FollowController < ApplicationController
     #we get user_id from jwt!
     user = User.find(decode_jwt(cookies.signed[:jwt])["user_id"])
     #we get friend_id from frontend
+    if !Block.where(blocker_id: user.id, blockee_id:follow_params[:user2]).empty?
+      return render json: {error:  "There was a problem! (Ya been blocked!)"}
+    end
+
     followee = User.find(follow_params[:user2])
     #insert the one way relation in db!
     friend_request = Follow.new(follower_id: user.id, followee_id: followee.id)
@@ -108,20 +107,31 @@ class FollowController < ApplicationController
     end
 
     block_half_a = Block.new(blocker_id: decode_jwt(cookies.signed[:jwt])["user_id"], blockee_id:follow_params[:user2])
-    block_half_b = Block.new(blocker_id: follow_params[:user2],blockee_id: decode_jwt(cookies.signed[:jwt])["user_id"])
+    
     if !block_half_a.save
-      ret_errors.push("Failure of saving first half block. ")
+      ret_errors.push("Failure of saving block. ")
     end
-    if !block_half_b.save
-      ret_errors.push("Failure of saving second half block. ")
-    end
+    
     if !!ret_errors
-      render json: {ret_errors: ret_errors}
+      render json: {errors: ret_errors}
     else
-      render json: {block_request: "block established"}
+      render json: {response: "block established"}
     end
 
 
+  end
+
+  #endpoint to unblock a friend
+  def unblock
+    user = User.find(decode_jwt(cookies.signed[:jwt])["user_id"])
+    #we get friend_id from frontend
+    if Block.where(blocker_id: user.id, blockee_id:follow_params[:user2]).empty?
+      return render json: {error:  "No block found!"}
+    end
+
+    Block.where(blocker_id: user.id, blockee_id:follow_params[:user2]).destroy_all
+    # byebug
+    return render json: {response:  "Friend unblocked"}
   end
 
   #endpoint to return count of friends

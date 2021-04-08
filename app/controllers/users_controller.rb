@@ -23,7 +23,7 @@ class UsersController < ApplicationController
         # byebug
         @user=User.new(user_params)
         if !@user.save
-            return render json: { message: "some kinda wrong just happend"}, status: :not_acceptable
+            return render json: { error: "that username is already taken, please try another"}, status: :not_acceptable
         end
         #
         #   More flatiron auth stuff
@@ -45,7 +45,8 @@ class UsersController < ApplicationController
         victim_user_groups = UserGroup.where(user_id: victim.id)
         victim_follower = Follow.where(follower_id: victim.id)
         victim_followee = Follow.where(followee_id: victim.id)
-        
+        victim_blockee = Block.where(blockee_id: victim.id)
+        victim_blocker = Block.where(blocker_id: victim.id)
         # delete all the relations & delete cookie,
         # delete User entry
         victim_messages.destroy_all
@@ -53,6 +54,8 @@ class UsersController < ApplicationController
         victim_user_groups.destroy_all
         victim_follower.destroy_all
         victim_followee.destroy_all
+        victim_blockee.destroy_all
+        victim_blocker.destroy_all
         cookies.delete :jwt
         victim.destroy
         render json: { del_user: "account deletion success" }
@@ -65,7 +68,11 @@ class UsersController < ApplicationController
     #endpoint to search for users to add or block
     def search
         # byebug
+        user=User.find(decode_jwt(cookies.signed[:jwt])["user_id"])
         search_user = User.find_by(username: user_params[:username])
+        if !Block.where(blocker_id: search_user.id, blockee_id:user.id).empty?
+            return render json: {error:  "There was a problem! (Ya been blocked!)"}
+        end
         render json: { user: search_user }
     end
 

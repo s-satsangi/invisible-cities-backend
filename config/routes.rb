@@ -3,10 +3,15 @@ Rails.application.routes.draw do
   get '/logout', to: 'auth#destroy'
   get '/groups', to: 'user_group#index'
   post '/groups', to: 'user_group#create'
+  post '/addtogroup', to: 'user_group#add_to_group'
+  post '/bootfromgroup', to: 'user_group#boot_from_group'
+  post '/delgroup', to: 'user_group#delete_group'
+
   get '/deluser', to: 'users#delete'
   post '/delmsg', to: 'message#delete'
 
   post '/block', to: 'follow#block'
+  post '/unblock', to: 'follow#unblock'
   post '/add_friend', to: 'follow#add_friend'
   post '/friends', to: 'follow#index'
   get '/numfriends', to: 'follow#number_for_profile'
